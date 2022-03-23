@@ -1,0 +1,116 @@
+---
+Tratar dados 'tempo.csv
+  Aparência: sol, nublado, chuva
+  Temperatura: -130~130F
+  Umidade: 0~100
+  Jogar: sim/não
+  Tratar valores Nas
+---
+
+```{r}
+# Importar dados, string vazio com NA, string como fatores
+dados = read.csv("tempo.csv", sep = ";", na.strings = "", stringsAsFactors = T)
+head(dados)
+summary(dados)
+```
+Explorar Dads, colunas categorias
+```{r}
+# Aparência
+counts = table(dados$Aparencia)
+barplot(counts, main = "Aparência", xlab = "Aparência")
+
+```
+```{r}
+# Ventos
+counts = table(dados$Vento)
+barplot(counts, main = "Ventos", xlab = "Ventos")
+
+```
+```{r}
+#Jogar
+counts = table(dados$Jogar)
+barplot(counts, main = "Jogar", xlab = "Jogar")
+```
+
+Emplorar colunas numéricas
+```{r}
+# Temperatura
+summary(dados$Temperatura)
+boxplot(dados$Temperatura)
+hist(dados$Temperatura)
+```
+```{r}
+# Umidade
+summary(dados$Umidade)
+boxplot(dados$Umidade)
+hist(dados$Umidade)
+```
+Valores faltantes - Nas
+```{r}
+dados[!complete.cases(dados),]
+```
+
+Aparência fora do domínio
+```{r}
+#fora do domínio - categoria
+unique(dados$Aparencia)
+summary(dados$Aparencia)
+#preencher com a moda, Chuva ou Sol
+dados[!dados$Aparencia %in% c("chuva", "nublado", "sol"),]$Aparencia = "chuva"
+summary(dados$Aparencia)
+# removemos fatores não usados
+dados$Aparencia = factor(dados$Aparencia)
+summary(dados$Aparencia)
+```
+
+Temperatura fora do domínio
+```{r}
+summary(dados$Temperatura)
+# fora do domínio, númerico - ver temperatura anormais
+dados[dados$Temperatura < -130 | dados$Temperatura > 130, ]$Temperatura
+# ver se tem algum dado Nas
+dados[is.na(dados$Temperatura)]
+# opção, preencer com mediana
+median(dados$Temperatura)
+# Substituição
+dados[dados$Temperatura < -130 | dados$Temperatura > 130, ]$Temperatura = median(dados$Temperatura)
+summary(dados$Temperatura)
+# buscando novamente temperatura anormais
+dados[dados$Temperatura < -130 | dados$Temperatura > 130, ]
+summary(dados$Temperatura)
+```
+
+Umidade fora do domínio
+```{r}
+# tratar umidade
+summary(dados$Umidade)
+#ver median
+median(dados$Umidade, na.rm = T)
+# atribuir mediana a Nas
+dados[is.na(dados$Umidade),]$Umidade = median(dados$Umidade, na.rm = T)
+# buscar Nas em salario para checar
+dados[!complete.cases(dados$Umidade)]
+# visualizar umidade
+summary(dados$Umidade)
+# fora do domínio, númerico - ver umidade anormais
+dados[dados$Umidade < 0 | dados$Umidade > 100, ]$Umidade
+# Substituição
+dados[dados$Umidade < 0 | dados$Umidade > 100, ]$Umidade = median(dados$Umidade)
+# visualizar umidade
+summary(dados$Temperatura)
+# buscando novamente Umidade anormais
+dados[dados$Umidade < 0 | dados$Umidade > 100, ]
+summary(dados$Temperatura)
+```
+Vento fora do domínio
+```{r}
+# ver valores
+unique(dados$Vento)
+summary(dados$Vento)
+#Tranformar Nas (moda) Falso
+dados[is.na(dados$Vento),]$Vento = "FALSO"
+# ver resultado
+summary(dados$Vento)
+```
+
+
